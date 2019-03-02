@@ -1,6 +1,6 @@
 import "./TodoItem.css";
 import React from "react";
-import { changeTodoStatus, changePriority } from "../actions";
+import { changeTodoStatus, changePriority, deleteTodo } from "../actions";
 import { connect } from "react-redux";
 import { PENDING, COMPLETED, ONGOING } from "../components/todo-status";
 import { HIGH, MEDIUM, LOW } from "../components/todo-priority";
@@ -176,6 +176,14 @@ class TodoItem extends React.Component {
 		this.props.changeTodoStatus(changeStatusTo, item._id);
 	};
 
+	/**
+	 * Calls an action creator to delete the given item.
+	 */
+	onDeleteClick = item => {
+		console.log("deleting");
+		this.props.deleteTodo(item);
+	};
+
 	render() {
 		var item = this.props.item;
 		return (
@@ -191,6 +199,9 @@ class TodoItem extends React.Component {
 						</button>
 						<button
 							className="ui circular red icon button"
+							onClick={() => {
+								this.onDeleteClick(item);
+							}}
 							data-tooltip="Delete"
 						>
 							<i className="cut icon" />
@@ -215,5 +226,5 @@ TodoItem.defaultProps = {
 
 export default connect(
 	null,
-	{ changeTodoStatus, changePriority }
+	{ changeTodoStatus, changePriority, deleteTodo }
 )(TodoItem);

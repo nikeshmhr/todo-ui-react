@@ -72,3 +72,9 @@ export const changePriority = (item, changeTo) => async dispatch => {
 	dispatch({ type: UPDATE_TODO, payload: response.data });
 	dispatch(fetchByStatus(item.status[0]));
 };
+
+export const deleteTodo = item => async dispatch => {
+	await todoapi.delete(`/tasks/${item._id}`);
+	dispatch(fetchByStatus(item.status[0]));
+	dispatch(fetchCounts());
+};
