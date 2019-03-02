@@ -1,0 +1,7 @@
+.checkbox-label {
+    cursor: pointer !important;
+}
+
+.text-line-through {
+    text-decoration: line-through;
+}
