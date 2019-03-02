@@ -9,6 +9,9 @@ import { fetchByStatus, fetchCounts } from "../actions";
 class TabView extends React.Component {
 	onTabClick = key => {
 		this.props.fetchByStatus(key);
+
+		// TODO: should call an action creator to fetch count for given key(status)
+		// TODO: BE needs to expose API to fetch count by status.
 	};
 
 	componentDidMount() {
