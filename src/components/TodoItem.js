@@ -1,17 +1,13 @@
 import "./TodoItem.css";
 import React from "react";
-import { changeTodoStatus } from "../actions";
+import { changeTodoStatus, changePriority } from "../actions";
 import { connect } from "react-redux";
 import { PENDING, COMPLETED, ONGOING } from "../components/todo-status";
+import { HIGH, MEDIUM, LOW } from "../components/todo-priority";
 
 class TodoItem extends React.Component {
 	state = {
 		editing: false
-	};
-
-	onCheckboxChange = e => {
-		this.props.item.checked = e.target.checked;
-		this.props.onCheckBoxClick(this.props.item);
 	};
 
 	renderPendingButton = item => {
@@ -99,16 +95,88 @@ class TodoItem extends React.Component {
 		}
 	};
 
-	onActionButtonClick = (actionType, item) => {
-		console.log(
-			"clicked button with action " + actionType + " for item ",
-			item
+	/**
+	 * Changes priority of given item to provided priority.
+	 */
+	onPriorityButtonClick = (item, changePriorityTo) => {
+		this.props.changePriority(item, changePriorityTo);
+	};
+
+	/**
+	 * Renders a Up arrow button for given item and attaches an click event listener.
+	 */
+	renderUpButton = item => {
+		const currentPriorityOfItem = item.priority[0];
+
+		const changePriorityTo =
+			currentPriorityOfItem === MEDIUM ? HIGH : MEDIUM;
+		return (
+			<button
+				className="tiny ui circular icon button"
+				onClick={() => {
+					this.onPriorityButtonClick(item, changePriorityTo);
+				}}
+			>
+				<i className="angle up icon" />
+			</button>
 		);
-		this.props.changeTodoStatus(actionType, item._id);
+	};
+
+	/**
+	 * Renders an Down arrow button for given item and attaches an click event listener.
+	 */
+	renderDownButton = item => {
+		const currentPriorityOfItem = item.priority[0];
+
+		const changePriorityTo = currentPriorityOfItem === HIGH ? MEDIUM : LOW;
+		return (
+			<button
+				className="tiny ui circular icon button"
+				onClick={() => {
+					this.onPriorityButtonClick(item, changePriorityTo);
+				}}
+			>
+				<i className="angle down icon" />
+			</button>
+		);
+	};
+
+	renderChangePriorityButton = item => {
+		const { priority } = item;
+
+		if (priority.includes(HIGH)) {
+			// Render single button component to change priority to medium
+			return (
+				<div className="left floated content">
+					{this.renderDownButton(item)}
+				</div>
+			);
+		} else if (priority.includes(MEDIUM)) {
+			// Render two button components to change priority to either high or low
+			return (
+				<div className="left floated content">
+					{this.renderUpButton(item)}
+					{this.renderDownButton(item)}
+				</div>
+			);
+		} else if (priority.includes(LOW)) {
+			// Render single button component to change priority to medium
+			return (
+				<div className="left floated content">
+					{this.renderUpButton(item)}
+				</div>
+			);
+		}
+	};
+
+	/**
+	 * Calls an action creator to update the status
+	 */
+	onActionButtonClick = (changeStatusTo, item) => {
+		this.props.changeTodoStatus(changeStatusTo, item._id);
 	};
 
 	render() {
-		console.log("todoitem", this.props.item);
 		var item = this.props.item;
 		return (
 			<div className="item">
@@ -129,13 +197,14 @@ class TodoItem extends React.Component {
 						</button>
 					</div>
 				</div>
-				<i className="angle down icon" />
+				{this.renderChangePriorityButton(item)}
 				<div className="content">{item.description}</div>
 			</div>
 		);
 	}
 }
 
+// TODO: this might not be required, remove this
 TodoItem.defaultProps = {
 	item: {
 		id: 0,
@@ -146,5 +215,5 @@ TodoItem.defaultProps = {
 
 export default connect(
 	null,
-	{ changeTodoStatus }
+	{ changeTodoStatus, changePriority }
 )(TodoItem);

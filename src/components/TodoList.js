@@ -4,17 +4,16 @@ import { connect } from "react-redux";
 import _ from "lodash";
 
 class TodoList extends React.Component {
+	/**
+	 * Construct ListItem component for given todo item.
+	 */
 	renderItem = item => {
-		return (
-			<TodoItem
-				className="item"
-				key={item._id}
-				item={item}
-				onCheckBoxClick={this.updateListItem}
-			/>
-		);
+		return <TodoItem className="item" key={item._id} item={item} />;
 	};
 
+	/**
+	 * Renders the header and todo item elements provided in a list.
+	 */
 	renderList = (headerText, todoElements) => {
 		if (todoElements.length) {
 			return (
@@ -29,6 +28,15 @@ class TodoList extends React.Component {
 		}
 	};
 
+	renderNoTodos(shouldRender) {
+		if (shouldRender)
+			return (
+				<div className="ui visible message">
+					<p>There aren't any todos here...</p>
+				</div>
+			);
+	}
+
 	render() {
 		const selectedStatus = this.props.status;
 		const selectedTodos = this.props.todos[selectedStatus].data;
@@ -39,11 +47,19 @@ class TodoList extends React.Component {
 		const highPriorityTodos = selectedTodos.high.map(this.renderItem);
 		const mediumPriorityTodos = selectedTodos.medium.map(this.renderItem);
 		const lowPriorityTodos = selectedTodos.low.map(this.renderItem);
+
+		// Check if there aren't any todos in the list
+		const isEmpty =
+			highPriorityTodos.length === 0 &&
+			highPriorityTodos.length === mediumPriorityTodos.length &&
+			mediumPriorityTodos.length === lowPriorityTodos.length;
+
 		return (
 			<>
 				{this.renderList("High", highPriorityTodos)}
 				{this.renderList("Medium", mediumPriorityTodos)}
 				{this.renderList("Low", lowPriorityTodos)}
+				{this.renderNoTodos(isEmpty)}
 			</>
 		);
 	}

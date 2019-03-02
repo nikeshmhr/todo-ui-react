@@ -1,25 +1,38 @@
 import todoapi from "../apis/todoapi";
 import { PENDING, ONGOING, COMPLETED } from "../components/todo-status";
-import { FETCH_BY_STATUS, COUNT_TODOS, CHANGE_STATUS } from "./types";
+import { FETCH_BY_STATUS, COUNT_TODOS, UPDATE_TODO } from "./types";
 
+/**
+ * Fetches the list of todos for given staus
+ * @param {} status
+ */
 export const fetchByStatus = status => async dispath => {
 	const response = await todoapi.get(`/tasks/status/${status}`);
 
 	dispath({ type: FETCH_BY_STATUS, payload: { ...response.data, status } });
 };
 
+/**
+ * Fetches a count for each todo category/status
+ */
 export const fetchCounts = () => async dispatch => {
 	const response = await todoapi.get("/tasks/tcount/all");
 
 	dispatch({ type: COUNT_TODOS, payload: response.data });
 };
 
+/**
+ * Updates the status of todo for given id to given status value.
+ * @param {*} changeTo
+ * @param {*} id
+ */
 export const changeTodoStatus = (changeTo, id) => async dispatch => {
+	// TODO: refactor needed, repetitive steps in changePriority function
 	const body = {
 		status: changeTo
 	};
 	const response = await todoapi.put(`/tasks/${id}`, body);
-	dispatch({ type: CHANGE_STATUS, payload: response.data });
+	dispatch({ type: UPDATE_TODO, payload: response.data });
 	dispatch(fetchTodosBesides(changeTo));
 	dispatch(fetchCounts());
 };
@@ -38,5 +51,24 @@ export const fetchTodosBesides = status => async dispatch => {
 	} else if (status === COMPLETED) {
 		dispatch(fetchByStatus(PENDING));
 		dispatch(fetchByStatus(ONGOING));
+	} else {
+		dispatch(fetchByStatus(PENDING));
+		dispatch(fetchByStatus(ONGOING));
+		dispatch(fetchByStatus(COMPLETED));
 	}
+};
+
+/**
+ * Changes the priority for given item._id with provided priority value
+ * @param {*} item
+ * @param {*} changeTo
+ */
+export const changePriority = (item, changeTo) => async dispatch => {
+	// TODO: refactor needed, repetitive steps in changeTodoStatus function
+	const body = {
+		priority: changeTo
+	};
+	const response = await todoapi.put(`/tasks/${item._id}`, body);
+	dispatch({ type: UPDATE_TODO, payload: response.data });
+	dispatch(fetchByStatus(item.status[0]));
 };
