@@ -1,6 +1,7 @@
 import React from "react";
 import AppHeader from "./AppHeader";
 import TabView from "./TabView";
+import TodoAdd from "./TodoAdd";
 
 const appConfig = {
 	header: {
@@ -16,6 +17,7 @@ const App = () => {
 				appName={appConfig.header.appName}
 				iconClass={appConfig.header.appIconClass}
 			/>
+			<TodoAdd />
 
 			<TabView />
 		</div>

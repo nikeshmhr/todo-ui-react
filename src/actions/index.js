@@ -1,6 +1,11 @@
 import todoapi from "../apis/todoapi";
 import { PENDING, ONGOING, COMPLETED } from "../components/todo-status";
-import { FETCH_BY_STATUS, COUNT_TODOS, UPDATE_TODO } from "./types";
+import {
+	FETCH_BY_STATUS,
+	COUNT_TODOS,
+	UPDATE_TODO,
+	CREATE_TODO
+} from "./types";
 
 /**
  * Fetches the list of todos for given staus
@@ -76,5 +81,12 @@ export const changePriority = (item, changeTo) => async dispatch => {
 export const deleteTodo = item => async dispatch => {
 	await todoapi.delete(`/tasks/${item._id}`);
 	dispatch(fetchByStatus(item.status[0]));
+	dispatch(fetchCounts());
+};
+
+export const createTodo = description => async dispatch => {
+	const response = await todoapi.post(`/tasks`, { description });
+	dispatch({ type: CREATE_TODO, payload: response.data });
+	dispatch(fetchByStatus(response.data.data.status[0]));
 	dispatch(fetchCounts());
 };
