@@ -90,3 +90,12 @@ export const createTodo = description => async dispatch => {
 	dispatch(fetchByStatus(response.data.data.status[0]));
 	dispatch(fetchCounts());
 };
+
+export const updateDescription = item => async dispatch => {
+	// Update description only.
+	const response = await todoapi.put(`/tasks/${item._id}`, {
+		description: item.description
+	});
+	dispatch({ type: UPDATE_TODO, payload: response.data });
+	dispatch(fetchByStatus(item.status[0]));
+};

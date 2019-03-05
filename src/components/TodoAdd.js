@@ -1,8 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
 import { createTodo } from "../actions";
+import { ESC_KEY_CODE } from "./key-code";
 
-const ESC_KEY_CODE = 27;
 const INITIAL_STATE = {
 	addClicked: false,
 	description: ""
@@ -32,30 +32,26 @@ class TodoAdd extends React.Component {
 	render() {
 		if (!this.state.addClicked) {
 			return (
-				<div>
-					<button
-						className="tiny ui circular icon button"
-						onClick={() => {
-							this.setState({ addClicked: true });
-						}}
-					>
-						<i className="icon add" />
-					</button>
-				</div>
+				<button
+					className="tiny ui circular icon button"
+					onClick={() => {
+						this.setState({ addClicked: true });
+					}}
+				>
+					<i className="icon add" />
+				</button>
 			);
 		}
 		return (
-			<div>
-				<form className="ui form" onSubmit={this.onFormSubmit}>
-					<input
-						type="text"
-						placeholder="Description..."
-						value={this.state.description}
-						onChange={this.onInputChange}
-						onKeyDown={this.onKeyPressed}
-					/>
-				</form>
-			</div>
+			<form className="ui form" onSubmit={this.onFormSubmit}>
+				<input
+					type="text"
+					placeholder="Description..."
+					value={this.state.description}
+					onChange={this.onInputChange}
+					onKeyDown={this.onKeyPressed}
+				/>
+			</form>
 		);
 	}
 }

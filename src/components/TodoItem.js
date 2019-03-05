@@ -1,14 +1,26 @@
 import "./TodoItem.css";
 import React from "react";
-import { changeTodoStatus, changePriority, deleteTodo } from "../actions";
+import {
+	changeTodoStatus,
+	changePriority,
+	deleteTodo,
+	updateDescription
+} from "../actions";
 import { connect } from "react-redux";
 import { PENDING, COMPLETED, ONGOING } from "../components/todo-status";
 import { HIGH, MEDIUM, LOW } from "../components/todo-priority";
+import { ESC_KEY_CODE } from "./key-code";
 
 class TodoItem extends React.Component {
 	state = {
-		editing: false
+		editing: false,
+		item: null
 	};
+
+	componentDidMount() {
+		// This temporary item object will later be used for editing
+		this.setState({ item: { ...this.props.item } });
+	}
 
 	renderPendingButton = item => {
 		return (
@@ -180,12 +192,51 @@ class TodoItem extends React.Component {
 	 * Calls an action creator to delete the given item.
 	 */
 	onDeleteClick = item => {
-		console.log("deleting");
 		this.props.deleteTodo(item);
+	};
+
+	onEditClick = () => {
+		this.setState({ editing: true, item: { ...this.props.item } });
+	};
+
+	onInputChange = e => {
+		const changedItem = this.state.item;
+		changedItem.description = e.target.value;
+		this.setState({ item: changedItem });
+	};
+
+	onFormSubmit = e => {
+		// Cause we don't want our page to refresh
+		e.preventDefault();
+
+		this.props.updateDescription(this.state.item);
+		this.setState({ editing: false, item: null });
+	};
+
+	onKeyPressed = e => {
+		if (e.keyCode === ESC_KEY_CODE) {
+			this.setState({ editing: false });
+		}
 	};
 
 	render() {
 		var item = this.props.item;
+
+		if (this.state.editing) {
+			return (
+				<div>
+					<form className="ui form" onSubmit={this.onFormSubmit}>
+						<input
+							type="text"
+							placeholder="Description..."
+							value={this.state.item.description}
+							onChange={this.onInputChange}
+							onKeyDown={this.onKeyPressed}
+						/>
+					</form>
+				</div>
+			);
+		}
 		return (
 			<div className="item">
 				{this.renderActionButtons(item)}
@@ -193,6 +244,7 @@ class TodoItem extends React.Component {
 					<div className="ui icon buttons">
 						<button
 							className="ui circular icon button"
+							onClick={this.onEditClick}
 							data-tooltip="Edit"
 						>
 							<i className="edit icon" />
@@ -226,5 +278,5 @@ TodoItem.defaultProps = {
 
 export default connect(
 	null,
-	{ changeTodoStatus, changePriority, deleteTodo }
+	{ changeTodoStatus, changePriority, deleteTodo, updateDescription }
 )(TodoItem);
