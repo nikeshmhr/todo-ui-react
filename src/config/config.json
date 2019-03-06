@@ -1,0 +1,8 @@
+{
+	"development": {
+		"apiURL": "http://localhost:9999"
+	},
+	"production": {
+		"apiURL": "https://todoapiv1.herokuapp.com"
+	}
+}
