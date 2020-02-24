@@ -10,18 +10,34 @@ const appConfig = {
 	}
 };
 
-const App = () => {
-	return (
-		<div className="ui raised very padded text container segment">
-			<AppHeader
-				appName={appConfig.header.appName}
-				iconClass={appConfig.header.appIconClass}
-			/>
-			<TodoAdd />
+class App extends React.Component {
+	login = () => {
+		this.props.auth.login();
+	};
 
-			<TabView />
-		</div>
-	);
-};
+	logout = () => {
+		this.props.auth.logout();
+	};
+
+	render() {
+		const { isAuthenticated } = this.props.auth;
+		if (!isAuthenticated()) {
+			this.login();
+			return null;
+		}
+		return (
+			<div className="ui raised very padded text container segment">
+				<AppHeader
+					onLogoutClick={this.logout}
+					appName={appConfig.header.appName}
+					iconClass={appConfig.header.appIconClass}
+				/>
+				<TodoAdd />
+
+				<TabView />
+			</div>
+		);
+	}
+}
 
 export default App;

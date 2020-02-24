@@ -6,13 +6,19 @@ import {
 	UPDATE_TODO,
 	CREATE_TODO
 } from "./types";
+import Auth from "../auth/Auth";
+
+const getAuthHeaders = new Auth().getAuthorizationHeader;
 
 /**
  * Fetches the list of todos for given staus
  * @param {} status
  */
 export const fetchByStatus = status => async dispath => {
-	const response = await todoapi.get(`/tasks/status/${status}`);
+	const response = await todoapi.get(
+		`/tasks/status/${status}`,
+		getAuthHeaders()
+	);
 
 	dispath({ type: FETCH_BY_STATUS, payload: { ...response.data, status } });
 };
@@ -21,7 +27,7 @@ export const fetchByStatus = status => async dispath => {
  * Fetches a count for each todo category/status
  */
 export const fetchCounts = () => async dispatch => {
-	const response = await todoapi.get("/tasks/tcount/all");
+	const response = await todoapi.get("/tasks/tcount/all", getAuthHeaders());
 
 	dispatch({ type: COUNT_TODOS, payload: response.data });
 };
@@ -36,7 +42,7 @@ export const changeTodoStatus = (changeTo, id) => async dispatch => {
 	const body = {
 		status: changeTo
 	};
-	const response = await todoapi.put(`/tasks/${id}`, body);
+	const response = await todoapi.put(`/tasks/${id}`, body, getAuthHeaders());
 	dispatch({ type: UPDATE_TODO, payload: response.data });
 	dispatch(fetchTodosBesides(changeTo));
 	dispatch(fetchCounts());
@@ -73,19 +79,27 @@ export const changePriority = (item, changeTo) => async dispatch => {
 	const body = {
 		priority: changeTo
 	};
-	const response = await todoapi.put(`/tasks/${item._id}`, body);
+	const response = await todoapi.put(
+		`/tasks/${item._id}`,
+		body,
+		getAuthHeaders()
+	);
 	dispatch({ type: UPDATE_TODO, payload: response.data });
 	dispatch(fetchByStatus(item.status[0]));
 };
 
 export const deleteTodo = item => async dispatch => {
-	await todoapi.delete(`/tasks/${item._id}`);
+	await todoapi.delete(`/tasks/${item._id}`, getAuthHeaders());
 	dispatch(fetchByStatus(item.status[0]));
 	dispatch(fetchCounts());
 };
 
 export const createTodo = description => async dispatch => {
-	const response = await todoapi.post(`/tasks`, { description });
+	const response = await todoapi.post(
+		`/tasks`,
+		{ description },
+		getAuthHeaders()
+	);
 	dispatch({ type: CREATE_TODO, payload: response.data });
 	dispatch(fetchByStatus(response.data.data.status[0]));
 	dispatch(fetchCounts());
@@ -93,9 +107,13 @@ export const createTodo = description => async dispatch => {
 
 export const updateDescription = item => async dispatch => {
 	// Update description only.
-	const response = await todoapi.put(`/tasks/${item._id}`, {
-		description: item.description
-	});
+	const response = await todoapi.put(
+		`/tasks/${item._id}`,
+		{
+			description: item.description
+		},
+		getAuthHeaders()
+	);
 	dispatch({ type: UPDATE_TODO, payload: response.data });
 	dispatch(fetchByStatus(item.status[0]));
 };
