@@ -12,7 +12,7 @@ const appConfig = {
 
 const App = () => {
 	return (
-		<div className="ui raised very padded text container segment">
+		<div className="ui raised very padded text container segment" style={{"min-height": "1500px"}}>
 			<AppHeader
 				appName={appConfig.header.appName}
 				iconClass={appConfig.header.appIconClass}
