@@ -30,18 +30,18 @@ class TodoAdd extends React.Component {
 	};
 
 	render() {
-		if (!this.state.addClicked) {
-			return (
-				<button
-					className="tiny ui circular icon button"
-					onClick={() => {
-						this.setState({ addClicked: true });
-					}}
-				>
-					<i className="icon add" />
-				</button>
-			);
-		}
+		// if (!this.state.addClicked) {
+		// 	return (
+		// 		<button
+		// 			className="tiny ui circular icon button"
+		// 			onClick={() => {
+		// 				this.setState({ addClicked: true });
+		// 			}}
+		// 		>
+		// 			<i className="icon add" />
+		// 		</button>
+		// 	);
+		// }
 		return (
 			<form className="ui form" onSubmit={this.onFormSubmit}>
 				<input
