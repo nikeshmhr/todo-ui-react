@@ -44,12 +44,14 @@ class TodoAdd extends React.Component {
 		// }
 		return (
 			<form className="ui form" onSubmit={this.onFormSubmit}>
+				<label htmlFor="todo-text">Text</label>
 				<input
 					type="text"
 					placeholder="Description..."
 					value={this.state.description}
 					onChange={this.onInputChange}
 					onKeyDown={this.onKeyPressed}
+					name="todo-text"
 				/>
 			</form>
 		);
