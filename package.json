@@ -29,6 +29,6 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "faker": "^6.0.0"
+    "@faker-js/faker": "^5.5.3"
   }
 }
